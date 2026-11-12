@@ -74,8 +74,13 @@ class MainActivity : ComponentActivity() {
             (function() {
               if (window.__nativeGeoInstalled) return;
               window.__nativeGeoInstalled = true;
-              if (!navigator.geolocation) return;
-              navigator.geolocation.getCurrentPosition = function(success, error, options) {
+              var geo = navigator.geolocation;
+              if (!geo) {
+                geo = {};
+                try { Object.defineProperty(navigator, 'geolocation', { value: geo, configurable: true }); }
+                catch (_) { return; }
+              }
+              geo.getCurrentPosition = function(success, error, options) {
                 window.__nativeGeoSuccess = success;
                 window.__nativeGeoError = error;
                 window.AndroidLocation.requestLocation();
